@@ -1,53 +1,40 @@
-"""
-Olvasd be az f1.txt adatait, majd oldd meg az alábbi feladatokat!
-Név; Csapat; Győzelmek száma; Teljesített futamok száma
-
-
-1. Hány versenyző szerepel a fájlban?
-2. Melyik versenyző nyerte a legtöbb futamot?
-3. Ki teljesített a legtöbb futamot?
-4. Átlagosan hány futamot teljesítettek a versenyzők?"
-
-A megoldott feladatokat a kiirt_adatok nevű mappába hozd létre statisztika.txt néven!
-"""
-
-f = open("beolvasando_adatok/f1.txt", "rt")
-
-
-#task 1
 participants = 0
-for x in f:
-    participants += 1
+most_wins = -1
+most_wins_driver = None
+most_races = -1
+most_races_driver = None
+total_races = 0
 
-#task 2
-most_w_p = "tege"
-most_wins = 0
-most_r_p = "asd"
-most_races = 0
-futamok = 0
+try:
+    with open("beolvasando_adatok/f1.txt", "r", encoding="utf-8") as f:
+        header = f.readline()
+        for line in f:
+            data = line.strip().split(";")
+            if len(data) != 4:
+                continue
+            
+            driver = data[0]
+            wins = int(data[2])
+            races = int(data[3])
+            
+            participants += 1
+            
+            if wins > most_wins:
+                most_wins = wins
+                most_wins_driver = driver
+            
+            if races > most_races:
+                most_races = races
+                most_races_driver = driver
+            
+            total_races += races
 
-with open("beolvasando_adatok/f1.txt", "r") as f:
-    for line in f:
-        data = line.strip().split(";")
+    average_races = total_races / participants if participants > 0 else 0
+    
+    print(f"\n1. A beolvasott fájlban összesen {participants} versenyző szerepel.\n")
+    print(f"2. A legtöbb futamot nyert versenyző: {most_wins_driver}\n")
+    print(f"3. A legtöbb futamot teljesített versenyző: {most_races_driver}\n")
+    print(f"4. Az átlagos futamszám: {average_races:.2f}\n")
 
-        wins = int(data[2])
-        person = data[0]
-        if wins > most_wins:
-            most_wins = wins
-            most_w_p = person
-
-        races = int(data[3])
-        person2 = data[0]
-        if races > most_races:
-            most_races = races
-            most_r_p = person2
-
-        for l in f:
-            futamok += int(data[3])
-
-futam_atl = futamok / participants
-
-print(f"\nA beolvasott fájlban összesen {participants} versenyző szerepel.")
-print(f"A legtöbb futamot nyert versenyző: {most_w_p}")
-print(f"A legtöbb futamot teljesített versenyző: {most_r_p}")
-print(f"Az átlagos futamszám: {futam_atl}\n")
+except FileNotFoundError:
+    print("Hiba: A 'f1.txt' fájl nem található.")
